@@ -1,0 +1,53 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Manga {
+    id               Int                @id @default(autoincrement())
+    name             String             @unique
+    other_name       String?
+    author           String
+    artist           String
+    status           String
+    release          String?
+    synopsis         String
+    created_at       DateTime           @default(now())
+    MangaDescription MangaDescription[]
+
+    @@map("manga")
+}
+
+model Description {
+    id               Int                @id @default(autoincrement())
+    name             String             @unique
+    created_at       DateTime           @default(now())
+    MangaDescription MangaDescription[]
+
+    @@map("description")
+}
+
+model MangaDescription {
+    id                Int         @id @default(autoincrement())
+    manga             Manga       @relation(fields: [fk_id_manga], references: [id])
+    fk_id_manga       Int
+    description       Description @relation(fields: [fk_id_description], references: [id])
+    fk_id_description Int
+    created_at        DateTime    @default(now())
+
+    @@map("manga_description")
+}
+
+model User {
+    id         Int      @id @default(autoincrement())
+    name       String
+    email      String   @unique
+    password   String
+    avatar     String?
+    isAdmin    Boolean  @default(false)
+    created_at DateTime @default(now())
+}
